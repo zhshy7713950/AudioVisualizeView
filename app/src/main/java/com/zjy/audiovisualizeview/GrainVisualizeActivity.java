@@ -16,15 +16,15 @@ public class GrainVisualizeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grain_visualize);
 
         vAudioVisualize = findViewById(R.id.audio_visualize_view);
-        vAudioVisualize.doPlay(R.raw.sound);
+//        vAudioVisualize.doPlay(R.raw.sound);
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (vAudioVisualize != null) {
-           vAudioVisualize.release();
-        }
+//        if (vAudioVisualize != null) {
+//           vAudioVisualize.release();
+//        }
     }
 }

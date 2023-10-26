@@ -8,25 +8,20 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
 import com.zjy.audiovisualize.R;
-import com.zjy.audiovisualize.media.MediaManager;
-import com.zjy.audiovisualize.media.MediaManagerListener;
-import com.zjy.audiovisualize.utils.LogUtils;
 import com.zjy.audiovisualize.visualize.VisualizeCallback;
-import com.zjy.audiovisualize.visualize.VisualizerHelper;
 
 /**
  * Date: 2020/10/16
  * Author: Yang
  * Describe: a view for visualizing audio, showing spectrum with different ui mode
  */
-public abstract class AudioVisualizeView extends View implements MediaManagerListener, VisualizeCallback {
+public abstract class AudioVisualizeView extends View implements VisualizeCallback {
 
     /**
      * the count of spectrum
@@ -61,9 +56,6 @@ public abstract class AudioVisualizeView extends View implements MediaManagerLis
     protected Paint mPaint;
     protected Path mPath;
     protected float centerX, centerY;
-
-    protected MediaManager mediaManager;
-    protected VisualizerHelper visualizerHelper;
 
     public AudioVisualizeView(Context context) {
         this(context, null);
@@ -110,54 +102,10 @@ public abstract class AudioVisualizeView extends View implements MediaManagerLis
 
         mRect = new RectF();
         mPath = new Path();
-
-        mediaManager = new MediaManager(getContext());
-        mediaManager.setMediaManagerListener(this);
-
-        visualizerHelper = new VisualizerHelper();
-        visualizerHelper.setVisualizeCallback(this);
-        visualizerHelper.setVisualCount(mSpectrumCount);
     }
 
-    /**
-     * start play raw file
-     */
-    public void doPlay(final int raw) {
-        if (mediaManager != null) {
-            mediaManager.doPlay(raw);
-        }
-    }
 
-    /**
-     * start play url file
-     */
-    public void doPlay(final String filePath) {
-        if (mediaManager != null) {
-            mediaManager.doPlay(filePath);
-        }
-    }
 
-    /**
-     * play with session Id, which visualize need.
-     * @param audioSessionId {@link MediaPlayer#getAudioSessionId()}
-     */
-    public void playWithSessionId(int audioSessionId) {
-        try {
-            visualizerHelper.setAudioSessionId(audioSessionId);
-        } catch (Exception e) {
-            LogUtils.e(e.getMessage());
-        }
-    }
-
-    @Override
-    public void onPrepare() {
-        try {
-            int mediaPlayerId = mediaManager.getMediaPlayerId();
-            visualizerHelper.setAudioSessionId(mediaPlayerId);
-        } catch (Exception e) {
-            LogUtils.e(e.getMessage());
-        }
-    }
 
     @Override
     public void onFftDataCapture(float[] parseData) {
@@ -195,7 +143,7 @@ public abstract class AudioVisualizeView extends View implements MediaManagerLis
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        mRect.set(0, 0, getWidth(), getHeight() - 50);
+        mRect.set(0, 0, getWidth(), getHeight());
         centerX = mRect.width() / 2;
         centerY = mRect.height() / 2;
     }
@@ -232,16 +180,5 @@ public abstract class AudioVisualizeView extends View implements MediaManagerLis
         this.isVisualizationEnabled = false;
     }
 
-    /**
-     * release media player and visualizer
-     */
-    public void release() {
-        if (visualizerHelper != null) {
-           visualizerHelper.release();
-        }
-        if (mediaManager != null) {
-            mediaManager.release();
-        }
-    }
 
 }

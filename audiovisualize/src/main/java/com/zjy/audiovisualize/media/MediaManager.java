@@ -35,20 +35,41 @@ public class MediaManager {
             mediaPlayer = MediaPlayer.create(mContext, raw);
             if (mediaPlayer == null) {
                 LogUtils.d("mediaPlayer is null");
+                if (mListener != null) {
+                    mListener.onError();
+                }
                 return;
             }
-
-            mediaPlayer.setOnErrorListener(null);
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                    if (mListener != null) {
+                        mListener.onError();
+                    }
+                    return false;
+                }
+            });
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     if (mListener != null) {
-                        mListener.onPrepare();
+                        mListener.onPrepare(mediaPlayer);
+                    }
+                }
+            });
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (mListener != null) {
+                        mListener.onCompletion(mediaPlayer);
                     }
                 }
             });
             mediaPlayer.start();
         } catch (Exception e) {
+            if (mListener != null) {
+                mListener.onError();
+            }
             LogUtils.d(e.getMessage());
         }
     }
@@ -63,20 +84,42 @@ public class MediaManager {
             mediaPlayer = MediaPlayer.create(mContext, Uri.parse(filePath));
             if (mediaPlayer == null) {
                 LogUtils.d("mediaPlayer is null");
+                if (mListener != null) {
+                    mListener.onError();
+                }
                 return;
             }
 
-            mediaPlayer.setOnErrorListener(null);
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                    if (mListener != null) {
+                        mListener.onError();
+                    }
+                    return false;
+                }
+            });
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     if (mListener != null) {
-                        mListener.onPrepare();
+                        mListener.onPrepare(mediaPlayer);
+                    }
+                }
+            });
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (mListener != null) {
+                        mListener.onCompletion(mediaPlayer);
                     }
                 }
             });
             mediaPlayer.start();
         } catch (Exception e) {
+            if (mListener != null) {
+                mListener.onError();
+            }
             LogUtils.d(e.getMessage());
         }
     }
